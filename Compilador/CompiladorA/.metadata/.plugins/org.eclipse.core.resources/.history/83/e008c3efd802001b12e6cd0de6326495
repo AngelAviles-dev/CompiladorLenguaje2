@@ -1,0 +1,96 @@
+package anaLaura;
+
+import java.util.Scanner;
+
+public class Ejemplo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner leer = new Scanner(System.in);
+		int opcion,resultado=0,tamano,numero;
+		 long decimal = 0;
+	        int posicion = 0;
+		String numero_binario,numero_decimal;
+	System.out.println("1. Conversión de binario a decimal.");	
+	System.out.println("2. Conversión de decimal a binario.");	
+	System.out.println("3. Conversión de octal a decimal.");	
+	System.out.println("4. Conversión de decimal a octal.");	
+	System.out.println("5. Conversión de decimal a hexadecimal.");	
+	System.out.println("6. Conversión de hexadecimal a decimal.");	
+	System.out.println("7. Conversión de decimal a hexadecimal.");	
+	System.out.println("8. Conversión de octal a hexadecimal.");	
+	System.out.println("9. Conversión de hexadecimal a octal.");	
+	System.out.println("10. Conversión de binario a hexadecimal.");	
+	System.out.println("11. Conversión de binario a octal.");	
+	System.out.println("12. Conversión de octal a binario.");	
+	System.out.println("13. Conversión de hexadecimal a binario.");	
+		
+		System.out.println("Teclea la opcion deseada...");
+		opcion = leer.nextInt();
+		switch (opcion)
+		{
+		    case 1: // Conversión de binario a decimal.
+		    	System.out.println("Ingrese el numero binario:");
+		        numero_binario = leer.next();
+		        short digito = 1;
+		        // Recorrer la cadena...
+		        for (int x = numero_binario.length() - 1; x >= 0; x--) {
+		            // Saber si es 1 o 0; primero asumimos que es 1 y abajo comprobamos
+		            digito = 1;
+		            if (numero_binario.charAt(x) == '0') {
+		                digito = 0;
+		            }
+		        
+		            /*
+		                Se multiplica el dígito por 2 elevado a la potencia
+		                según la posición; comenzando en 0, luego 1 y así
+		                sucesivamente
+		             */
+		            double multiplicador = Math.pow(2, posicion);
+		            decimal += digito * multiplicador;
+		            posicion++;
+		        }
+		        System.out.println("Numero decimal es:" + decimal);
+		    break;
+		    case 2: //Conversión de decimal a binario.		    	
+		    	int exp,digito2=0;
+		        double binario;
+		        do{ 
+		            System.out.print("Introduce un numero entero >= 0: ");                                                
+		            numero = leer.nextInt();
+		        }while(numero < 0);
+		        exp=0;
+		        binario=0;
+		        while(numero!=0){
+		                digito2 = numero % 2;           
+		                binario = binario + digito2 * Math.pow(10, exp);                                                   
+		                exp++;
+		                numero = numero/2;
+		        }
+		        System.out.printf("Binario: %.0f %n", binario);
+		    case 3: // Conversión de binario a decimal.
+		        
+		    case 4: // Conversión de decimal a binario.
+		        
+		    case 6: // Conversión de hexadecimal a decimal.
+		    
+		    case 7: // Conversión de decimal a hexadecimal.
+		    
+		    case 8: // Conversión de octal a hexadecimal.'
+
+		    case 9: // Conversión de hexadecimal a octal.
+
+		    case 10: // Conversión de binario a hexadecimal.
+
+		    case 11: // Conversión de binario a octal.
+
+		    case 12: // Conversión de octal a binario.
+
+		    case 13: // Conversión de hexadecimal a binario.    
+		    
+	}
+
+		    
+	}
+
+}
