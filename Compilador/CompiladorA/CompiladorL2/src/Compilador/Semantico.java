@@ -8,7 +8,12 @@ public class Semantico {
 		//Validacion de TablaDeSimbolos ya declaradas
 		ValidarDuplicado();
 		//Validar asignacion a una variable
-		ValidarAsignacion();	
+		ValidarAsignacion();
+		//Validar operando de tipos compatibles
+		ValidarOperandos();
+		if(Lexico.errores.get(Lexico.errores.size()-1).equals("No hay errores sintacticos"))
+			Lexico.errores.add("No hay errores semanticos");
+		GeneraTabla.llenarTabla();
 	}
 	public void ValidarDeclaracion(){
 		for(int i=0;i<GeneraTabla.TablaDeSimbolos.size();i++){
@@ -99,6 +104,48 @@ public class Semantico {
 			//variables string pueden asignar cualquier cadena y cualquier caracter
 	}
 }
+
+	public void ValidarOperandos(){
+		ArrayList<String> tokensExpresion = new ArrayList<String>();
+		for(int i =0;i<GeneraTabla.TablaDeSimbolos.size();i++){
+			Identificador ide = GeneraTabla.TablaDeSimbolos.get(i);//obtenemos el valor
+			StringTokenizer tokenizer = new StringTokenizer(ide.getValor());
+			int z=tokenizer.countTokens();
+			for(int j=0;j<z;j++){
+				tokensExpresion.add(tokenizer.nextToken());//los metemos separados en array
+			}
+			if(ide.getTipo().equals("boolean") && tokensExpresion.size()>1){
+				Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar una expresion.");
+				GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+			}else if(ide.getTipo().equals("int") && tokensExpresion.size()>1){
+				//Los recorremos para buscar que todos sean enteros
+				for(int j=0;j<tokensExpresion.size();j++){
+					if(!tokensExpresion.get(j).equals("+") && !tokensExpresion.get(j).equals("-") && !tokensExpresion.get(j).equals("/")
+							&& !tokensExpresion.get(j).equals("*")){
+						//Si no es un operador entonces es un operando
+						if(!revisaOperandos(tokensExpresion.get(j),"int")){//si no es entero ni variable entera
+							Lexico.errores.add("Error en la linea "+buscaLineaE(ide,tokensExpresion.get(0))+": Existen valores no enteros en la expresion");
+							GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+						}
+					}
+				}
+			}else if(ide.getTipo().equals("double") && tokensExpresion.size()>1){
+				//Los recorremos para buscar que todos sean double
+				for(int j=0;j<tokensExpresion.size();j++){
+					if(!tokensExpresion.get(j).equals("+") && !tokensExpresion.get(j).equals("-") && !tokensExpresion.get(j).equals("/")
+							&& !tokensExpresion.get(j).equals("*")){
+						//Si no es un operador entonces es un operando
+						if(!revisaOperandos(tokensExpresion.get(j),"double")){//si no es double ni variable double
+							Lexico.errores.add("Error en la linea "+buscaLineaE(ide,tokensExpresion.get(0))+": Existen valores no double en la expresion");
+							GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+						}
+					}
+				}
+			}
+			tokensExpresion.clear();
+		}
+	}
+
 	public boolean EsEntero(String cadena) {
         boolean resultado;
         if(cadena.indexOf(".")==-1){//No trae punto es entero
