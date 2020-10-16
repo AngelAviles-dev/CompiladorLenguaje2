@@ -15,10 +15,6 @@ public class Vista extends JFrame implements ActionListener{
 	JRadioButton abrir;
 	JFileChooser archivoSeleccionado;
 	File archivo;
-	static DefaultTableModel modelo;
-	String titulos[]={"Nombre","Tipo","Valor","Posicion","Alcance"};
-	JTable tabla;
-	JScrollPane Tabla;
 	JTabbedPane documentos, analizada, resultados;
 	JTextArea Doc,Lex,Result;
 	JList<String> tokens;
@@ -79,9 +75,6 @@ public class Vista extends JFrame implements ActionListener{
 		menuPrincipal.add(opcion);
 		menuPrincipal.add(analisis);
 		documentos.setToolTipText("Aqui se muestra el codigo");
-		modelo = new DefaultTableModel(null,titulos);//Modelo de las tablas
-		tabla= new JTable(modelo);//tabla de simbolos
-		Tabla = new JScrollPane(tabla);
 		archivo=archivoSeleccionado.getSelectedFile();
 		documentos.addTab(archivo.getName().toString(),new JScrollPane(Doc));
 		analizada.addTab("Compilador",new JScrollPane(Lex));
@@ -230,5 +223,5 @@ public class Vista extends JFrame implements ActionListener{
 		incorre.setVisible(false);
 		incorre2.setVisible(false);
 	}
-
+	
 }
