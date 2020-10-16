@@ -1,10 +1,104 @@
 package Compilador;
-
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 public class Semantico {
-
 	public Semantico(){
-		
+		//Validacion de TablaDeSimbolos utilizadas sin declarar
+		ValidarDeclaracion();
+		//Validacion de TablaDeSimbolos ya declaradas
+		ValidarDuplicado();
+		//Validar asignacion a una variable
+		ValidarAsignacion();	
+	}
+	public void ValidarDeclaracion(){
+		for(int i=0;i<GeneraTabla.TablaDeSimbolos.size();i++){
+			Identificador ide = GeneraTabla.TablaDeSimbolos.get(i);
+			if(ide.getTipo().equals("")){
+				Lexico.errores.add("Error en la linea "+ide.getLinea()+": La variable "+ide.getNombre()+" no ha sido declarada.");
+				GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+			}
 		}
+	}
+	public void ValidarDuplicado(){
+		for(int i=0;i<GeneraTabla.TablaDeSimbolos.size()-1;i++){
+			Identificador variable1= GeneraTabla.TablaDeSimbolos.get(i);
+			for(int j=i+1;j<GeneraTabla.TablaDeSimbolos.size();j++){
+				Identificador variable2= GeneraTabla.TablaDeSimbolos.get(j);
+				if(variable1.getNombre().equals(variable2.getNombre()) && (!variable2.getTipo().equals("") || !variable1.getTipo().equals(""))){
+					//Son iguales, se debe verificar sus alcances
+					if(variable1.getAlcance().equals("Global") && variable2.getAlcance().equals("Global")){
+						Lexico.errores.add("Error en la linea "+variable2.getLinea()+": La variable "
+								+variable2.getNombre()+" ya fue declarada en la linea "+variable1.getLinea());
+						GeneraTabla.TablaDeSimbolos.get(j).setCorrecta(false);
+					}
+					else if(variable1.getAlcance().equals("Global") && variable2.getAlcance().equals("Local")){
+						Lexico.errores.add("Error en la linea "+variable2.getLinea()+": La variable "
+								+variable2.getNombre()+" ya fue declarada en la linea "+variable1.getLinea());
+						GeneraTabla.TablaDeSimbolos.get(j).setCorrecta(false);
+					}
+					else if(variable1.getAlcance().equals("Local") && variable2.getAlcance().equals("Local")){
+						if(variable1.getDesde()<variable2.getDesde())
+							Lexico.errores.add("Error en la linea "+variable2.getLinea()+": La variable "
+									+variable2.getNombre()+" ya fue declarada en la linea "+variable1.getLinea());	
+						GeneraTabla.TablaDeSimbolos.get(j).setCorrecta(false);
+					}			
+				}
+			}
+		}
+	}
+	public void ValidarAsignacion(){
+		//Aqui validaremos solamente cuando se le iguala un valor a la variable
+		//cuando se le asigan una expresion sera validado en el metodo de operadores
+		StringTokenizer tokenizer;
+		for(int i=0;i<GeneraTabla.TablaDeSimbolos.size();i++){
+			Identificador ide = GeneraTabla.TablaDeSimbolos.get(i);
+			tokenizer = new StringTokenizer(ide.getValor());
+			//Validar variable booleana
+			if(ide.getTipo().equals("boolean") && tokenizer.countTokens()==1){
+				if(EsEntero(ide.getValor())){	
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor int.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}else if(EsDouble(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor double.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}else if(!EsBooleana(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor cadena.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+				}
+			//Validar variable entera
+			else if(ide.getTipo().equals("int") && tokenizer.countTokens()==1){
+				if(EsDouble(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor double.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+				else if(!EsBooleana(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor boolean.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+				else if(!EsEntero(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor cadena.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+			}
+			//Validar variable double
+			else if(ide.getTipo().equals("double") && tokenizer.countTokens()==1){
+				if(EsEntero(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor int.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+				else if(!EsBooleana(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor boolean.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+				else if(!EsDouble(ide.getValor())){
+					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor cadena.");
+					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
+				}
+			}
+			//variables string pueden asignar cualquier cadena y cualquier caracter
+	}
+}
 	public boolean EsEntero(String cadena) {
         boolean resultado;
         if(cadena.indexOf(".")==-1){//No trae punto es entero
@@ -18,7 +112,6 @@ public class Semantico {
         	resultado=false;
         return resultado;
     }
-	
 	public boolean EsDouble(String cadena) {
         boolean resultado;
         if(cadena.indexOf(".")!=-1){//trae punto es decimal
@@ -69,17 +162,36 @@ public class Semantico {
 		}
 		return linea;
 	}
+	
 	public boolean revisaOperandos(String operando, String tipo){
 		boolean tipoCorrecto=false;
 		if(tipo.equals("int")){
 		if(EsEntero(operando)){//verificamos que sea numero entero
 			tipoCorrecto=true;
-		} else{
-			if(EsDouble(operando)){//verificamos que sea numero entero
-				tipoCorrecto=true;
+		}else{
+			//buscamos si es un identificador entero
+			for(int i=0; i<GeneraTabla.TablaDeSimbolos.size();i++){
+				if(GeneraTabla.TablaDeSimbolos.get(i).getNombre().equals(operando)
+						&& GeneraTabla.TablaDeSimbolos.get(i).getTipo().equals("int")){
+					tipoCorrecto=true;
+					break;
+				}
 			}
 		}
-	}
+		}else{
+			if(EsDouble(operando)){//verificamos que sea numero entero
+				tipoCorrecto=true;
+			}else{
+				//buscamos si es un identificador entero
+				for(int i=0; i<GeneraTabla.TablaDeSimbolos.size();i++){
+					if(GeneraTabla.TablaDeSimbolos.get(i).getNombre().equals(operando)
+							&& GeneraTabla.TablaDeSimbolos.get(i).getTipo().equals("double")){
+						tipoCorrecto=true;
+						break;
+					}
+				}
+			}
+		}
 		return tipoCorrecto;
 	}
 }
