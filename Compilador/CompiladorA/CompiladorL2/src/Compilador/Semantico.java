@@ -1,13 +1,15 @@
 package Compilador;
+
 import java.util.ArrayList;
 import java.util.StringTokenizer;
+
 public class Semantico {
 	public Semantico(){
 		//Validacion de TablaDeSimbolos utilizadas sin declarar
 		ValidarDeclaracion();
 		//Validacion de TablaDeSimbolos ya declaradas
 		ValidarDuplicado();
-		//Validar asignacion a una variable
+		//Validar asignacion auna variable
 		ValidarAsignacion();
 		//Validar operando de tipos compatibles
 		ValidarOperandos();
@@ -23,7 +25,9 @@ public class Semantico {
 				GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
 			}
 		}
+		
 	}
+	
 	public void ValidarDuplicado(){
 		for(int i=0;i<GeneraTabla.TablaDeSimbolos.size()-1;i++){
 			Identificador variable1= GeneraTabla.TablaDeSimbolos.get(i);
@@ -46,11 +50,13 @@ public class Semantico {
 							Lexico.errores.add("Error en la linea "+variable2.getLinea()+": La variable "
 									+variable2.getNombre()+" ya fue declarada en la linea "+variable1.getLinea());	
 						GeneraTabla.TablaDeSimbolos.get(j).setCorrecta(false);
-					}			
+					}
+					
 				}
 			}
 		}
 	}
+	
 	public void ValidarAsignacion(){
 		//Aqui validaremos solamente cuando se le iguala un valor a la variable
 		//cuando se le asigan una expresion sera validado en el metodo de operadores
@@ -77,7 +83,7 @@ public class Semantico {
 					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor double.");
 					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
 				}
-				else if(!EsBooleana(ide.getValor())){
+				else if(EsBooleana(ide.getValor())){
 					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor boolean.");
 					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
 				}
@@ -92,7 +98,7 @@ public class Semantico {
 					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor int.");
 					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
 				}
-				else if(!EsBooleana(ide.getValor())){
+				else if(EsBooleana(ide.getValor())){
 					Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar un valor boolean.");
 					GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
 				}
@@ -104,7 +110,7 @@ public class Semantico {
 			//variables string pueden asignar cualquier cadena y cualquier caracter
 	}
 }
-
+	
 	public void ValidarOperandos(){
 		ArrayList<String> tokensExpresion = new ArrayList<String>();
 		for(int i =0;i<GeneraTabla.TablaDeSimbolos.size();i++){
@@ -115,7 +121,7 @@ public class Semantico {
 				tokensExpresion.add(tokenizer.nextToken());//los metemos separados en array
 			}
 			if(ide.getTipo().equals("boolean") && tokensExpresion.size()>1){
-				Lexico.errores.add("Error en la linea "+buscaLinea(ide)+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar una expresion.");
+				Lexico.errores.add("Error en la linea "+buscaLineaE(ide,tokensExpresion.get(0))+": La variable "+ide.getNombre()+" de tipo "+ide.getTipo()+" no se le puede asignar una expresion.");
 				GeneraTabla.TablaDeSimbolos.get(i).setCorrecta(false);
 			}else if(ide.getTipo().equals("int") && tokensExpresion.size()>1){
 				//Los recorremos para buscar que todos sean enteros
@@ -145,7 +151,8 @@ public class Semantico {
 			tokensExpresion.clear();
 		}
 	}
-
+	
+	
 	public boolean EsEntero(String cadena) {
         boolean resultado;
         if(cadena.indexOf(".")==-1){//No trae punto es entero
@@ -159,6 +166,7 @@ public class Semantico {
         	resultado=false;
         return resultado;
     }
+	
 	public boolean EsDouble(String cadena) {
         boolean resultado;
         if(cadena.indexOf(".")!=-1){//trae punto es decimal

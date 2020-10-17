@@ -8,7 +8,7 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.table.*;
 public class Vista extends JFrame implements ActionListener{
-	JLabel corre,corre2;
+	JLabel corre,corre2,corre3;
 	JLabel incorre,incorre2,incorre3;
 	JMenuBar menuPrincipal;
 	JMenu opcion,analisis;
@@ -38,18 +38,19 @@ public class Vista extends JFrame implements ActionListener{
 		analisis=new JMenu("Analisis");
 		opcion.setIcon(Rutinas.AjustarImagen("Archivo.png", 25, 25));
 		analisis.setIcon(Rutinas.AjustarImagen("Analisis.png", 25, 25));
-		
 		/*Opciones del menu*/
 		opcion.add(new JMenuItem("Guardar",Rutinas.AjustarImagen("Nuevo.png", 25, 25)));
 		opcion.getItem(0).setEnabled(false);
 		opcion.addSeparator();
 		opcion.add(new JMenuItem("Modificar",Rutinas.AjustarImagen("Modificar.png", 25, 25)));
-		//-----------------------------------------------------------------------------------
+		//Menu 2
 		analisis.add(new JMenuItem("Lexico",Rutinas.AjustarImagen("Lexico.png", 25, 25)));
 		analisis.addSeparator();
 		analisis.add(new JMenuItem("Sintactico",Rutinas.AjustarImagen("Sintactico.png", 25, 25)));
 		analisis.getItem(2).setEnabled(false);
 		analisis.addSeparator();
+		analisis.add(new JMenuItem("Semantico",Rutinas.AjustarImagen("Semantico.png", 25, 25)));//
+		analisis.getItem(4).setEnabled(false);
 		/*Ventana de archivo*/
 		archivoSeleccionado= new JFileChooser("Abrir");
 		archivoSeleccionado.setDialogTitle("Abrir");
@@ -77,7 +78,7 @@ public class Vista extends JFrame implements ActionListener{
 		setLocationRelativeTo(null);
 		setJMenuBar(menuPrincipal);
 		menuPrincipal.add(opcion);
-		menuPrincipal.add(analisis);
+		menuPrincipal.add(analisis);   
 		documentos.setToolTipText("Aqui se muestra el codigo");
 		modelo = new DefaultTableModel(null,titulos);//Modelo de las tablas
 		tabla= new JTable(modelo);//tabla de simbolos
@@ -94,6 +95,15 @@ public class Vista extends JFrame implements ActionListener{
 		add(analizada);
 		resultados.setBounds(1,236,665,237);
 		add(resultados);
+		JLabel sim = new JLabel(Rutinas.AjustarImagen("Simnolos.png", 40, 40));
+		JLabel sim2 = new JLabel("Tabla De Simbolos:");
+		sim2.setFont(new Font("Consolas", Font.BOLD, 16));
+		sim2.setBounds(713, 252,250,15);
+		add(sim2);
+		sim.setBounds(667, 240,40,40);
+		add(sim);
+		Tabla.setBounds(667, 282,685, 125);
+		add(Tabla);
 		//---------------------------------------------------------------------------
 		corre = new JLabel(Rutinas.AjustarImagen("Correcto.png", 30, 30));
 		incorre = new JLabel(Rutinas.AjustarImagen("Incorrecto.png", 30, 30));
@@ -121,6 +131,19 @@ public class Vista extends JFrame implements ActionListener{
 		add(corre2);
 		add(incorre2);
 		//---------------------------------------------------------------------------
+		corre3 = new JLabel(Rutinas.AjustarImagen("Correcto.png", 30, 30));
+		incorre3 = new JLabel(Rutinas.AjustarImagen("Incorrecto.png", 30, 30));
+		JLabel lacorre3 = new JLabel("Analisis Semantico.");
+		lacorre3.setFont(new Font("Consolas", Font.BOLD, 16));
+		lacorre3.setBounds(713, 670,250,15);
+		add(lacorre3);
+		corre3.setBounds(667, 660, 30, 30);
+		corre3.setVisible(false);
+		incorre3.setBounds(667, 660, 30, 30);
+		incorre3.setVisible(false);
+		add(corre3);
+		add(incorre3);
+		//---------------------------------------------------------------------------
 		JLabel corre7 = new JLabel(Rutinas.AjustarImagen("Icono2.png", 130, 130));
 		corre7.setBounds(500, 580, 130, 130);
 		add(corre7);
@@ -134,12 +157,14 @@ public class Vista extends JFrame implements ActionListener{
 		opcion.getItem(2).addActionListener(this);
 		analisis.getItem(0).addActionListener(this);
 		analisis.getItem(2).addActionListener(this);
+		analisis.getItem(4).addActionListener(this);
 	}
 	public void actionPerformed(ActionEvent e) {
 		/*Opciones de archivo*/
 		if(e.getSource()==opcion.getItem(0)) {
 			guardar();
 			reinicia();
+			limpiarTabla();
 			opcion.getItem(0).setEnabled(false);
 			analisis.getItem(0).setEnabled(true);
 		}
@@ -167,10 +192,24 @@ public class Vista extends JFrame implements ActionListener{
 			analisis.getItem(2).setEnabled(false);
 			if(Lexico.errores.get(1).equals("No hay errores sintacticos"))
 				{
+				analisis.getItem(4).setEnabled(true);
 				corre2.setVisible(true);
 				}else
 					incorre2.setVisible(true);
 		}
+		
+		/*Semantico*/
+		if(e.getSource()==analisis.getItem(4)) {
+			analisis.getItem(4).setEnabled(false);
+			new GeneraTabla();
+			new Semantico();
+			llena(Lex,Result,"");
+			if(Lexico.errores.get(2).equals("No hay errores semanticos"))//Verifica que el analisis semantico se realizo correctamente.
+				{
+				corre3.setVisible(true);
+				}else
+					incorre3.setVisible(true);
+		}		
 	}
 	public boolean guardar() {
 		try {
@@ -227,8 +266,16 @@ public class Vista extends JFrame implements ActionListener{
 		analisis.getItem(0).setEnabled(true);
 		corre.setVisible(false);
 		corre2.setVisible(false);
+		corre3.setVisible(false);
 		incorre.setVisible(false);
 		incorre2.setVisible(false);
+		incorre3.setVisible(false);
 	}
-
+	
+	public void limpiarTabla(){
+		while(tabla.getRowCount()!=0){
+			((DefaultTableModel)tabla.getModel()).removeRow(0);
+		}
+	}
+	
 }
