@@ -23,6 +23,17 @@ public class Vista extends JFrame implements ActionListener{
 	JTextArea Doc,Lex,Result;
 	JList<String> tokens;
 	boolean ban=true;
+	
+	//****************************************
+	
+	
+	static DefaultTableModel modeloCuadruplo;
+	String titulosCuadruplo[]={"Operador","Argumento 1","Argumento 2","Resultado"};
+	JTable tablaCuadruplo;
+	JScrollPane TablaCuadruplo;
+	
+	
+	//****************************************
 	public Vista() {
 		formatoWindows();
 		inicializaciones();
