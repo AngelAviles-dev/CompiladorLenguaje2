@@ -61,9 +61,9 @@ public class Intermedio {
 					Tabla.add(expresion.get(i+1));
 					Tabla.add(expresion.get(i+2));
 					Tabla.add("");
-					Tabla.add("T"+cont);
+					Tabla.add("Guevi"+cont);
 					expresionEditada.add(expresion.get(i));
-					expresionEditada.add("T"+cont);
+					expresionEditada.add("Guevi"+cont);
 					i+=2;
 				}
 				else
@@ -83,9 +83,9 @@ public class Intermedio {
 				Tabla.add(expresion.get(i));
 				Tabla.add(expresion.get(i-1));
 				Tabla.add(expresion.get(i+1));
-				Tabla.add("T"+cont);
+				Tabla.add("Guevi"+cont);
 				expresionEditada.remove(expresionEditada.size()-1);
-				expresionEditada.add("T"+cont);
+				expresionEditada.add("Guevi"+cont);
 				continua(i+2);
 				break;
 			}
@@ -108,9 +108,9 @@ public class Intermedio {
 					Tabla.add(expresion.get(i));
 					Tabla.add(expresion.get(i-1));
 					Tabla.add(expresion.get(i+1));
-					Tabla.add("T"+cont);
+					Tabla.add("Guevi"+cont);
 					expresionEditada.remove(expresionEditada.size()-1);
-					expresionEditada.add("T"+cont);
+					expresionEditada.add("Guevi"+cont);
 					continua(i+2);
 					break;
 				}
