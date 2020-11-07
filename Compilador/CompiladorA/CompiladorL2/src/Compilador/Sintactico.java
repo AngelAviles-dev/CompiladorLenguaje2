@@ -39,7 +39,7 @@ public class Sintactico {
 		for (Identificador identificador : TablaSimbolos) {
 			if (identificador.getTipo().equals("")) {
 				String x =buscar(identificador.getNombre());
-				identificador.setTipo(x);
+			identificador.setTipo(x);
 			}
 			System.out.println(identificador);
 		}

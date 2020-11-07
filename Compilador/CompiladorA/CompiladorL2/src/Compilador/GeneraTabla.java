@@ -1,6 +1,5 @@
 package Compilador;
 import java.util.ArrayList;
-
 public class GeneraTabla {
 	
 	static ArrayList<Identificador> TablaDeSimbolos;
@@ -30,8 +29,7 @@ public class GeneraTabla {
 					if(buscaAlcance(Lexico.tokenAnalizados.get(aux+1))=="Global")
 					TablaDeSimbolos.add(new Identificador(Lexico.tokenAnalizados.get(aux+1).getValor(),valor,Lexico.tokenAnalizados.get(aux).getValor(),Lexico.tokenAnalizados.get(aux+1).getLinea(),"Global"));
 					else
-					TablaDeSimbolos.add(new Identificador(Lexico.tokenAnalizados.get(aux+1).getValor(),valor,Lexico.tokenAnalizados.get(aux).getValor(),Lexico.tokenAnalizados.get(aux+1).getLinea(),"Local",desde,hasta));
-					
+					TablaDeSimbolos.add(new Identificador(Lexico.tokenAnalizados.get(aux+1).getValor(),valor,Lexico.tokenAnalizados.get(aux).getValor(),Lexico.tokenAnalizados.get(aux+1).getLinea(),"Local",desde,hasta));					
 				}
 				else if(Lexico.tokenAnalizados.get(i+2).getValor().equals(";")){
 					if(buscaAlcance(Lexico.tokenAnalizados.get(i+1))=="Global")
@@ -115,6 +113,6 @@ public class GeneraTabla {
 					TablaDeSimbolos.get(i).getLinea(),
 					TablaDeSimbolos.get(i).getAlcance()});
 			}
-		}	
+		}
 	}
 }
